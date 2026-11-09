@@ -4,4 +4,5 @@
     <Platform Name="x86" />
   </Configurations>
   <Project Path="JuegoCaso01.vcxproj" Id="59676a15-38fd-475b-af9a-b2ac175b7b4e" />
+  <Project Path="GameLogicTests.vcxproj" />
 </Solution>

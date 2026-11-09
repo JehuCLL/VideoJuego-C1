@@ -1,33 +1,38 @@
-# Caso 1: exploración 2D — versión Sprint 1
+# Caso 1 — Exploración y combate 2D
 
-Primera versión funcional del videojuego de escritorio en C++20 para Windows, desarrollada con Visual Studio 2026 y la API Win32. No requiere un motor, servicios externos ni recursos descargados. El área de juego tiene 800 × 600 píxeles.
+Juego de escritorio en C++20 con raylib 6.2.0. La solución de Visual Studio contiene el juego y las pruebas de lógica.
 
-## Ejecutar
+## Abrir y ejecutar
 
-1. Abrir `JuegoCaso01.slnx` en Visual Studio 2026 con la carga de trabajo **Desarrollo para el escritorio con C++**.
-2. Seleccionar `Debug | x64` y ejecutar con **F5** o **Ctrl+F5**.
-3. También se puede compilar con MSBuild desde una terminal de Visual Studio: `MSBuild JuegoCaso01.slnx /p:Configuration=Debug /p:Platform=x64`.
+Abre `JuegoCaso01.slnx` en Visual Studio con la carga de trabajo **Desarrollo para el escritorio con C++**. En el Explorador de soluciones verás los filtros `Model`, `View`, `Controller`, `Inicio` y `Assets`, que agrupan los archivos según su función. Las carpetas físicas están bajo `src`, `Tests` y `assets`. Selecciona `JuegoCaso01` como proyecto de inicio, usa `Debug | x64` y presiona **F5** o **Ctrl+F5**. Si Visual Studio solicita restaurar NuGet, acepta la restauración del paquete `raylib` 6.2.0. El archivo `packages.config` registra la dependencia y la compilación copia los sprites al directorio del ejecutable.
 
-**Controles:** WASD o flechas para moverse en cuatro direcciones, mouse para apuntar, R para reiniciar la sala. Al perder el foco de la ventana se liberan las teclas para evitar movimiento retenido.
+También se puede compilar con MSBuild: `MSBuild JuegoCaso01.slnx /p:Configuration=Debug /p:Platform=x64`.
 
-El personaje verde es el explorador; el segmento amarillo indica el apuntado. Las áreas grises son obstáculos sólidos. La vida aparece arriba a la derecha. El paso verde en el borde conecta dos salas; la vida se conserva al cruzarlo. En este sprint no hay combate, enemigos, llaves ni puertas con cerradura; están planificados para los sprints siguientes.
+**Controles:** WASD o flechas para mover, mouse para apuntar, clic izquierdo para disparar, R para reiniciar y Esc para cerrar. El paso verde conecta las dos salas. Al cambiar de sala se conservan la vida y los enemigos ya derrotados.
 
-## Arquitectura
+## Alcance actual
 
-La explicación detallada de clases, funciones, colisiones, tecnología y diseño visual está en [`EXPLICACION_TECNICA_SPRINT1.md`](EXPLICACION_TECNICA_SPRINT1.md).
+La base del Sprint 1 incluye movimiento, colisiones con paredes y cajas, apuntado, vida y dos salas. De Sprint 2 están implementados solo **RF-05, RF-06, RF-07, RF-09 y RF-10**: disparos del explorador, impactos de sus proyectiles contra enemigos y obstáculos, daño y eliminación de enemigos, movimiento y orientación de enemigos, y disparos enemigos dirigidos al explorador. Los proyectiles enemigos desaparecen al tocar al jugador, pero **no reducen su vida**, ya que RF-11 no forma parte del alcance solicitado.
 
-- `GameLogic.hpp`: estado de entrada, jugador, sala, obstáculos, colisiones AABB, movimiento, apuntado y reglas de vida. No depende de la interfaz de Windows.
-- `JuegoCaso01.cpp`: ventana Win32, teclado y mouse, ciclo de actualización y dibujo con GDI. No contiene reglas de colisión.
-- `GameLogicTests.cpp`: pruebas aisladas de movimiento, límites, obstáculos, apuntado, vida y reinicio.
+La presentación utiliza dos sprites pixel art derivados de las referencias proporcionadas para el explorador y el slime. Las texturas tienen fondo transparente y filtro de punto (`TEXTURE_FILTER_POINT`) para mantener bordes nítidos.
 
-La vida se conserva en `Player` y queda limitada a 0–100, también al cambiar de sala. El movimiento diagonal se resuelve como horizontal para mantener las cuatro direcciones del requisito. El tiempo de actualización se limita a 50 ms para evitar saltos excesivos tras una pausa del sistema. No hay persistencia en disco.
+## Estructura MVC
+
+```text
+JuegoCaso01/
+├─ src/
+│  ├─ Model/GameModel.hpp             Estado, entidades y reglas del juego
+│  ├─ View/GameView.hpp/.cpp           Dibujo, HUD y sprites con raylib
+│  ├─ Controller/GameController.hpp/.cpp  Entrada y ciclo del juego
+│  └─ main.cpp                         Punto de entrada
+├─ Tests/GameLogicTests.cpp            Pruebas de reglas sin ventana
+├─ assets/                             Sprites PNG
+├─ JuegoCaso01.slnx                    Solución de Visual Studio
+└─ README.md
+```
+
+`GameController` recibe la entrada y actualiza `game::Game`. `GameView` recibe el modelo como `const` y solo lo dibuja. El modelo no incluye raylib, por lo que sus colisiones y reglas pueden probarse sin interfaz. Los filtros del Explorador de soluciones muestran esta división; `Inicio` agrupa `src/main.cpp`.
 
 ## Pruebas
 
-La solución incluye `GameLogicTests.vcxproj`. Compilar la solución y ejecutar `x64\Debug\GameLogicTests.exe`. Un resultado correcto imprime `Sprint 1 logic tests passed`.
-
-Comprobar manualmente que WASD y flechas mueven al personaje, que los bordes y cajas bloquean el avance, que el segmento amarillo sigue el cursor y que la ventana conserva el área cliente de 800 × 600.
-
-## Alcance y estado
-
-Esta versión cubre RF-01, RF-02, RF-03, RF-04 y RF-08. Aplica RNF-03, RNF-07, RNF-11, RNF-12 y RNF-13 mediante resolución fija, ejecución local, responsabilidades separadas y lógica probada sin interfaz. No se afirma aceptación formal de requisitos ni métricas de rendimiento sin la prueba correspondiente.
+Compila la solución en `Debug | x64` y ejecuta `x64\Debug\GameLogicTests.exe`. Las pruebas cubren las reglas del Sprint 1 y los cinco RF seleccionados del Sprint 2. La documentación técnica y de validación del proyecto se conserva por separado en la carpeta académica `VU2`.
