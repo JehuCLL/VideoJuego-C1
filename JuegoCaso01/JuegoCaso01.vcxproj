@@ -155,6 +155,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Tests\GameLogicTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <GameAsset Include="assets\explorador.png" />

@@ -5,6 +5,7 @@
     <Filter Include="Model"><UniqueIdentifier>{A3122FB0-1023-4099-A5DA-BBBA8528450D}</UniqueIdentifier></Filter>
     <Filter Include="View"><UniqueIdentifier>{B4B31F14-3DEB-4301-9807-F28ACAD91730}</UniqueIdentifier></Filter>
     <Filter Include="Controller"><UniqueIdentifier>{13D29CC9-FC27-4AF8-986E-EE766F1262DB}</UniqueIdentifier></Filter>
+    <Filter Include="Tests"><UniqueIdentifier>{B0A26917-E3C8-4395-B7D8-56B360450ED7}</UniqueIdentifier></Filter>
     <Filter Include="Assets"><UniqueIdentifier>{D16D23C0-F97B-4866-8EF6-9B3AE863AA11}</UniqueIdentifier></Filter>
   </ItemGroup>
   <ItemGroup>
@@ -21,5 +22,5 @@
     <GameAsset Include="assets\explorador.png"><Filter>Assets</Filter></GameAsset>
     <GameAsset Include="assets\slime.png"><Filter>Assets</Filter></GameAsset>
   </ItemGroup>
-  <ItemGroup><None Include="packages.config" /></ItemGroup>
+  <ItemGroup><None Include="packages.config" /><None Include="Tests\GameLogicTests.cpp"><Filter>Tests</Filter></None></ItemGroup>
 </Project>

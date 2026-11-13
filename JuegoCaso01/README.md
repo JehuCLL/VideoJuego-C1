@@ -1,6 +1,6 @@
 # Caso 1 — Exploración y combate 2D
 
-Juego de escritorio en C++20 con raylib 6.2.0. La solución de Visual Studio contiene el juego y las pruebas de lógica.
+Juego de escritorio en C++20 con raylib 6.2.0. La solución de Visual Studio contiene un solo proyecto; el código de pruebas está en `Tests/`.
 
 ## Abrir y ejecutar
 
@@ -35,4 +35,4 @@ JuegoCaso01/
 
 ## Pruebas
 
-Compila la solución en `Debug | x64` y ejecuta `x64\Debug\GameLogicTests.exe`. Las pruebas cubren las reglas del Sprint 1 y los cinco RF seleccionados del Sprint 2. La documentación técnica y de validación del proyecto se conserva por separado en la carpeta académica `VU2`.
+Para ejecutar las pruebas, abre una Developer Command Prompt de Visual Studio en esta carpeta y usa `cl /std:c++20 /EHsc /W4 /Fo:x64\Debug\GameLogicTests.obj /Fe:x64\Debug\GameLogicTests.exe Tests\GameLogicTests.cpp && x64\Debug\GameLogicTests.exe`. Las pruebas cubren las reglas del Sprint 1 y los cinco RF seleccionados del Sprint 2. La documentación técnica y de validación del proyecto se conserva por separado en la carpeta académica `VU2`.
