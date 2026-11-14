@@ -51,10 +51,10 @@ void drawActors(const game::Game& model, Texture2D explorer, Texture2D slime) {
         game::Vec2 c=game::center(enemy.bounds());
         DrawEllipse(int(c.x),int(c.y+17),27,8,{7,22,24,160});
         DrawLineEx({c.x,c.y},{c.x+enemy.facing.x*23,c.y+enemy.facing.y*23},2,{176,215,91,150});
-        drawSprite(slime,{enemy.position.x-10,enemy.position.y-10,50,45},
-                   enemy.hitFlash>0 ? WHITE : Color{220,255,220,255});
+        Color tint=enemy.kind==game::Enemy::Kind::Swift ? Color{170,220,255,255} : Color{220,255,220,255};
+        drawSprite(slime,{enemy.position.x-10,enemy.position.y-10,50,45},enemy.hitFlash>0 ? WHITE : tint);
         DrawRectangle(int(enemy.position.x),int(enemy.position.y-9),30,3,{48,66,53,255});
-        DrawRectangle(int(enemy.position.x),int(enemy.position.y-9),10*enemy.health,3,{188,228,73,255});
+        DrawRectangle(int(enemy.position.x),int(enemy.position.y-9),30*enemy.health/enemy.maxHealth,3,{188,228,73,255});
     }
     for (const game::Projectile& shot : model.projectiles) {
         Color color=shot.hostile ? Color{221,124,255,255} : gold;
@@ -69,7 +69,7 @@ void drawActors(const game::Game& model, Texture2D explorer, Texture2D slime) {
     EndScissorMode();
 }
 
-void drawHud(const game::Game& model, bool focused) {
+void drawHud(const game::Game& model, bool focused, float p95LatencyMs, unsigned samples) {
     DrawText("CASO 01  /  EXPLORACION",32,18,18,{245,247,250,255});
     DrawText(model.roomIndex==0 ? "SALA 01 / 02" : "SALA 02 / 02",326,20,16,{138,166,175,255});
     DrawText(TextFormat("VIDA  %d / %d",model.player.health,model.player.maxHealth),625,19,17,{245,247,250,255});
@@ -77,7 +77,9 @@ void drawHud(const game::Game& model, bool focused) {
     DrawRectangle(625,47,135*model.player.health/model.player.maxHealth,5,mint);
     int alive=0; for (const auto& e : model.enemies()) if (e.alive) ++alive;
     DrawText(TextFormat("ENEMIGOS  %d",alive),469,21,15,{155,187,179,255});
+    DrawText(TextFormat("PUNTOS %d",model.score),305,43,13,{220,205,132,255});
     DrawText("WASD/FLECHAS MOVER   MOUSE APUNTAR   CLIC IZQ DISPARAR   R REINICIAR",32,575,13,{161,187,193,255});
+    DrawText(samples ? TextFormat("P95 %.0fMS",p95LatencyMs) : "P95 --",690,575,12,{161,187,193,255});
     game::Vec2 mouse=model.input.mouse;
     DrawLine(int(mouse.x)-8,int(mouse.y),int(mouse.x)-3,int(mouse.y),gold);
     DrawLine(int(mouse.x)+3,int(mouse.y),int(mouse.x)+8,int(mouse.y),gold);
@@ -102,8 +104,8 @@ void GameView::unload() {
     explorer_={}; slime_={};
 }
 
-void GameView::draw(const game::Game& model, bool focused) const {
+void GameView::draw(const game::Game& model, bool focused, float p95LatencyMs, unsigned samples) const {
     drawRoom(model);
     drawActors(model,explorer_,slime_);
-    drawHud(model,focused);
+    drawHud(model,focused,p95LatencyMs,samples);
 }

@@ -8,7 +8,7 @@ class GameView {
 public:
     void load();
     void unload();
-    void draw(const game::Game& model, bool focused) const;
+    void draw(const game::Game& model, bool focused, float p95LatencyMs, unsigned samples) const;
 
 private:
     Texture2D explorer_{};
