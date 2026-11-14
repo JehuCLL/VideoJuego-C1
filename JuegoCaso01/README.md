@@ -12,7 +12,9 @@ También se puede compilar con MSBuild: `MSBuild JuegoCaso01.slnx /p:Configurati
 
 ## Alcance actual
 
-La base del Sprint 1 incluye movimiento, colisiones con paredes y cajas, apuntado, vida y dos salas. De Sprint 2 están implementados solo **RF-05, RF-06, RF-07, RF-09 y RF-10**: disparos del explorador, impactos de sus proyectiles contra enemigos y obstáculos, daño y eliminación de enemigos, movimiento y orientación de enemigos, y disparos enemigos dirigidos al explorador. Los proyectiles enemigos desaparecen al tocar al jugador, pero **no reducen su vida**, ya que RF-11 no forma parte del alcance solicitado.
+La base del Sprint 1 incluye movimiento, colisiones con paredes y cajas, apuntado, vida y dos salas. El combate incluye **RF-05, RF-06, RF-07, RF-09, RF-10, RF-11, RF-12 y RF-17**: disparos, impactos, daño al jugador y a enemigos, aparición válida de enemigos y puntuación. Hay dos variantes de slime con distintos valores de vida, velocidad, frecuencia de disparo y puntos. El puntaje y los enemigos derrotados se conservan al cambiar de sala; R los restablece.
+
+La vista muestra un P95 de latencia entre lectura de entrada y final del fotograma dibujado. Es una medición interna para RNF-02; la aceptación de tiempo desde la acción física hasta el primer cambio visible debe comprobarse en el equipo de prueba.
 
 La presentación utiliza dos sprites pixel art derivados de las referencias proporcionadas para el explorador y el slime. Las texturas tienen fondo transparente y filtro de punto (`TEXTURE_FILTER_POINT`) para mantener bordes nítidos.
 
@@ -35,4 +37,4 @@ JuegoCaso01/
 
 ## Pruebas
 
-Para ejecutar las pruebas, abre una Developer Command Prompt de Visual Studio en esta carpeta y usa `cl /std:c++20 /EHsc /W4 /Fo:x64\Debug\GameLogicTests.obj /Fe:x64\Debug\GameLogicTests.exe Tests\GameLogicTests.cpp && x64\Debug\GameLogicTests.exe`. Las pruebas cubren las reglas del Sprint 1 y los cinco RF seleccionados del Sprint 2. La documentación técnica y de validación del proyecto se conserva por separado en la carpeta académica `VU2`.
+Para ejecutar las pruebas, abre una Developer Command Prompt de Visual Studio en esta carpeta y usa `cl /std:c++20 /EHsc /W4 /Fo:x64\Debug\GameLogicTests.obj /Fe:x64\Debug\GameLogicTests.exe Tests\GameLogicTests.cpp && x64\Debug\GameLogicTests.exe`. Las pruebas del modelo cubren movimiento, colisiones, disparos, daño, aparición de enemigos, puntuación y variantes sin abrir la ventana (RNF-15). La documentación técnica y de validación del proyecto se conserva por separado en la carpeta académica `VU2`.

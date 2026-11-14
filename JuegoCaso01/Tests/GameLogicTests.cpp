@@ -1,6 +1,9 @@
 #include "../src/Model/GameModel.hpp"
 #include <cassert>
 #include <iostream>
+#include <chrono>
+#include <array>
+#include <algorithm>
 
 int main(){
     using namespace game;
@@ -59,5 +62,52 @@ int main(){
     g.enemies()[0].shootTimer=0; g.update(0.05f);
     assert(g.projectiles.empty());
     g.reset(); assert(g.player.health==100 && g.roomIndex==0);
-    std::cout << "Sprint 1 and selected Sprint 2 logic tests passed\n";
+    // RF-12: every configured spawn is valid and the two variants exist.
+    bool sawSwift=false, sawSlime=false;
+    Enemy swift{}, slime{};
+    for(int roomIndex=0;roomIndex<2;++roomIndex){
+        Room configured=Room::create(roomIndex);
+        assert(g.roomEnemies[roomIndex].size()==3);
+        for(const Enemy& e:g.roomEnemies[roomIndex]){
+            assert(configured.canOccupy(e.bounds()));
+            if(e.kind==Enemy::Kind::Swift){ sawSwift=true; swift=e; }
+            else { sawSlime=true; slime=e; }
+        }
+    }
+    assert(sawSwift && sawSlime);
+    assert(swift.speed>slime.speed && swift.attackInterval<slime.attackInterval && swift.points>slime.points);
+    // RF-11: one hostile projectile costs exactly its configured damage.
+    g.room.obstacles.clear(); g.enemies().clear();
+    g.projectiles.push_back({center(g.player.bounds()),{0,0},1.0f,true,true,10});
+    g.update(0); assert(g.player.health==90 && g.projectiles.empty());
+    g.update(0); assert(g.player.health==90);
+    // RF-17/RNF-14: death awards points once; reset clears the score.
+    g.projectiles.clear(); g.enemies()={Enemy{{130,120}}};
+    g.input.mouse={250,134};
+    for(int hit=0;hit<3;++hit){
+        g.input.firePressed=true; g.update(0);
+        for(int i=0;i<3;++i) g.update(0.05f);
+    }
+    assert(!g.enemies()[0].alive && g.score==100);
+    g.input.firePressed=true; g.update(0);
+    for(int i=0;i<3;++i) g.update(0.05f);
+    assert(g.score==100);
+    g.enterRoom(1); assert(g.score==100);
+    g.reset(); assert(g.score==0);
+    // RNF-02: 100 representative input updates, measured without graphics.
+    std::array<double,100> responseMs{};
+    g.reset();
+    for(int i=0;i<100;++i){
+        g.input.right=(i%2)==0; g.input.left=!g.input.right;
+        g.input.mouse={float(180+i%50),float(120+i%40)};
+        g.input.firePressed=(i%4)==0;
+        auto start=std::chrono::steady_clock::now();
+        g.update(1.0f/60.0f);
+        auto finish=std::chrono::steady_clock::now();
+        responseMs[i]=std::chrono::duration<double,std::milli>(finish-start).count();
+    }
+    std::sort(responseMs.begin(),responseMs.end());
+    assert(responseMs[94]<=100.0);
+    std::cout << "Model response P95: " << responseMs[94] << " ms\n";
+    std::cout << "Game logic tests passed\n";
 }
